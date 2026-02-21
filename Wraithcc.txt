@@ -23055,70 +23055,8 @@ local set_silent_aim_position = nil
 local get_silent_aim_position = nil
 local get_backtrack_models = nil
 
+-- >> ( legitbot ui ) -- created first so tab is never empty
 do
-    -- >> ( mouse hook )
-
-    local silent_aim_position = nil
-    local silent_aim_redirect_chance = 0
-    local custom_silent_aim_position = nil
-
-    pcall(function()
-        local old = getrawmetatable(mouse)
-        local old_index = old["__index"]
-        local getcallingscript = getcallingscript
-        local getthreadidentity = getthreadidentity
-        local checkcaller = checkcaller
-        
-        local new = {
-            ["__index"] = newcclosure(LPH_JIT_MAX(function(self, index)
-                local force = getthreadidentity() == 5
-                if (force or not checkcaller()) and self and index == "Hit" then
-                    if silent_aim_position or ragebot_aim_position then
-                        if force or getcallingscript()["Name"]:find("Gun") then
-                            if ragebot_aim_position then
-                                return cframe_new(ragebot_aim_position)
-                            end
-                            if math_random(1,100) > silent_aim_redirect_chance then
-                                return cframe_new(silent_aim_position)
-                            end
-                        end
-                    end
-                end
-                return old_index(self, index)
-            end))
-        }
-
-        for _, v in old do
-            if not new[_] then
-                new[_] = v
-            end
-        end
-
-        setrawmetatable(mouse, new)
-    end)
-
-    set_silent_aim_position = LPH_NO_VIRTUALIZE(function(position)
-        local type = typeof(position)
-
-        if type ~= "Vector3" then
-            error("juju: set_silent_aim_position expected Vector3 got"..type)
-            return
-        end
-
-        custom_silent_aim_position = position
-        spawn(function()
-            if custom_silent_aim_position == position then
-                custom_silent_aim_position = nil
-            end
-        end)
-    end)
-
-    get_silent_aim_position = LPH_NO_VIRTUALIZE(function()
-        return custom_silent_aim_position or silent_aim_position
-    end)
-
-    -- >> ( ui )
-
     menu_references["legitbot_settings_section"] = menu["groups"]["main"]:create_section("legitbot", "target selection", 1, 0.57)
         menu_references["legitbot_target_selection_settings"] = menu_references["legitbot_settings_section"]:create_element({["name"] = "settings"}, {})
         menu_references["legitbot_target_selection_settings"] = menu_references["legitbot_target_selection_settings"]:create_settings()
@@ -23189,6 +23127,72 @@ do
         menu_references["backtrack_length"] = menu_references["backtrack_settings"]:create_element({["name"] = "length"}, {["slider"] = {["flag"] = "backtrack_length", ["min"] = 0.05, ["max"] = 2, ["decimals"] = 2, ["default"] = 0.125, ["suffix"] = "s"}})
         menu_references["backtrack_color"] = menu_references["backtrack_settings"]:create_element({["name"] = "color"}, {["colorpicker"] = {["color_flag"] = "backtrack_color", ["default_color"] = color3_fromrgb(181, 255, 246), ["default_transparency"] = 0.8, ["transparency_flag"] = "backtrack_transparency"}})
         menu_references["backtrack_material"] = menu_references["backtrack_settings"]:create_element({["name"] = "material"}, {["dropdown"] = {["flag"] = "backtrack_material", ["options"] = {"forcefield", "neon"}, ["default"] = {"neon"}, ["requires_one"] = true}})
+
+end -- end of legitbot ui do block
+
+-- >> ( legitbot hooks + logic )
+do
+    local silent_aim_position = nil
+    local silent_aim_redirect_chance = 0
+    local custom_silent_aim_position = nil
+
+    -- mouse hook chạy sau khi UI đã tạo xong
+    task.spawn(function()
+        pcall(function()
+            local old = getrawmetatable(mouse)
+            local old_index = old["__index"]
+            local getcallingscript = getcallingscript
+            local getthreadidentity = getthreadidentity
+            local checkcaller = checkcaller
+
+            local new = {
+                ["__index"] = newcclosure(LPH_JIT_MAX(function(self, index)
+                    local force = getthreadidentity() == 5
+                    if (force or not checkcaller()) and self and index == "Hit" then
+                        if silent_aim_position or ragebot_aim_position then
+                            if force or getcallingscript()["Name"]:find("Gun") then
+                                if ragebot_aim_position then
+                                    return cframe_new(ragebot_aim_position)
+                                end
+                                if math_random(1,100) > silent_aim_redirect_chance then
+                                    return cframe_new(silent_aim_position)
+                                end
+                            end
+                        end
+                    end
+                    return old_index(self, index)
+                end))
+            }
+
+            for _, v in old do
+                if not new[_] then
+                    new[_] = v
+                end
+            end
+
+            setrawmetatable(mouse, new)
+        end)
+    end)
+
+    set_silent_aim_position = LPH_NO_VIRTUALIZE(function(position)
+        local type = typeof(position)
+
+        if type ~= "Vector3" then
+            error("juju: set_silent_aim_position expected Vector3 got"..type)
+            return
+        end
+
+        custom_silent_aim_position = position
+        spawn(function()
+            if custom_silent_aim_position == position then
+                custom_silent_aim_position = nil
+            end
+        end)
+    end)
+
+    get_silent_aim_position = LPH_NO_VIRTUALIZE(function()
+        return custom_silent_aim_position or silent_aim_position
+    end)
 
     -- >> ( legitbot master )
 
