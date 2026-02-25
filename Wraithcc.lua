@@ -1,3 +1,5 @@
+--> dont make key sys pls
+
 repeat task["wait"]() until game:IsLoaded()
 
 if (identifyexecutor() == "AWP" or identifyexecutor() == "Nihon") then
@@ -359,32 +361,32 @@ do
     do
         local files = {
             ["assets"] = {
-                ["api.lua"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/api.lua") end,
-                ["sparkle.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/sparkle.ogg") end,
-                ["skeet.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/skeet.ogg") end,
-                ["neverlose.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/neverlose.ogg") end,
-                ["break.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/break.ogg") end,
-                ["mc bow.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/mc%20bow.ogg") end,
-                ["primordial.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/primordial.ogg") end,
-                ["rust.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/rust.ogg") end,
-                ["sexy.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/sexy.ogg") end,
-                ["jaydes.png"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/jaydes.png") end,
-                ["1.png"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/1.png") end,
-                ["2.png"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/2.png") end,
-                ["logo.png"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/logo.png") end,
-                ["saturation.png"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/saturation.png") end,
+                ["api.lua"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/api.lua") end,
+                ["sparkle.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/sparkle.ogg") end,
+                ["skeet.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/skeet.ogg") end,
+                ["neverlose.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/neverlose.ogg") end,
+                ["break.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/break.ogg") end,
+                ["mc bow.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/mc%20bow.ogg") end,
+                ["primordial.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/primordial.ogg") end,
+                ["rust.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/rust.ogg") end,
+                ["sexy.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/sexy.ogg") end,
+                ["jaydes.png"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/jaydes.png") end,
+                ["1.png"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/1.png") end,
+                ["2.png"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/2.png") end,
+                ["logo.png"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/logo.png") end,
+                ["saturation.png"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/saturation.png") end,
             },
             ["custom"] = {
-                ["textures.json"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/textures.json") end,
-                ["character.rbxm"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/character.rbxm") end,
-                ["pinksky.rbxm"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/pinksky.rbxm") end,
-                ["scar.ogg"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/scar.ogg") end,
-                ["x hit.rbxm"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/x%20hit.rbxm") end,
-                ["blossom aura.rbxm"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/blossom%20aura.rbxm") end,
-                ["spam.json"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/spam.json") end,
+                ["textures.json"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/textures.json") end,
+                ["character.rbxm"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/character.rbxm") end,
+                ["pinksky.rbxm"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/pinksky.rbxm") end,
+                ["scar.ogg"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/scar.ogg") end,
+                ["x hit.rbxm"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/x%20hit.rbxm") end,
+                ["blossom aura.rbxm"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/blossom%20aura.rbxm") end,
+                ["spam.json"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/spam.json") end,
             },
             ["themes"] = {
-                ["default.th"] = function() return game:HttpGet("https://github.com/hncddrtggqazcrezggs/juju/raw/refs/heads/main/default.th") end,
+                ["default.th"] = function() return game:HttpGet("https://github.com/khenn791/lmao/raw/refs/heads/main/default.th") end,
             },
             ["addons"] = {},
             ["configs"] = {},
@@ -420,7 +422,7 @@ do
 
     local drawing = Drawing
     LPH_NO_VIRTUALIZE(function()
-        drawing = _G.FORCE_REAL_DRAWING and Drawing or loadstring(readfile("juju recode/assets/api.lua"))()
+        drawing = loadstring(game:HttpGet("https://raw.githubusercontent.com/khenn791/lmao/refs/heads/main/api.lua"))()
     end)()
 
     getgenv()["fake_drawing"] = drawing
@@ -743,7 +745,7 @@ do
     local build_text = drawing_proxy["new"]("Text", {
         ["Font"] = 1,
         ["Color"] = menu["colors"]["accent"],
-        ["Text"] = (LRM_ScriptName == "da hood" or LRM_ScriptName == "da hood copies") and "private" or "live",
+        ["Text"] = (LRM_ScriptName == "da hood" or LRM_ScriptName == "da hood copies") and "live" or "private",
         ["Parent"] = logo,
         ["Position"] = udim2_new(1, 5, 0, 19),
         ["Size"] = 14,
@@ -19283,7 +19285,7 @@ do
     local fov_circle_outline = nil
     local shoot = nil
 
-    do
+    --[[do
         for _, new_upvalue in getupvalues(rawget(require(replicated_storage["Modules"]["GunHandler"]), "shoot")) do
             if type(new_upvalue) == "function" and getinfo(new_upvalue) and getinfo(new_upvalue)["name"] == "shoot" then
                 shoot = new_upvalue
@@ -19295,7 +19297,7 @@ do
             local_player:Kick("Please rejoin.")
             return
         end
-    end
+    end]]
 
     local get_closest_to_mouse_position = LPH_NO_VIRTUALIZE(function(dt, hrp)
         local mouse_pos = get_mouse_location(user_input_service)
@@ -25383,7 +25385,7 @@ do
     local username = "?"
     local avatar = nil
 
-    local LRM_LinkedDiscordID = LRM_LinkedDiscordID or "869580485695782994"
+    local LRM_LinkedDiscordID = LRM_LinkedDiscordID or "320421345324433418"
     if LRM_LinkedDiscordID then
         local s, data = pcall(function()
             local body = request({
@@ -25711,4 +25713,3 @@ do
         local_crew = crew["Value"]
     end))
 end
-
