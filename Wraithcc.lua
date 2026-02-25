@@ -19,198 +19,75 @@ getgenv()["juju"] = {}
 -- > ( bypass )
 
 LPH_JIT_MAX(function()
-    if not getgenv().wraith_bypass_v2 then
-        -- Anti-detection: Random delays
-        task.wait(math.random(50, 150) / 1000)
-        
+    if not getgenv().done then
         local reg = getreg()
-        local gc = getgc(true)
         local connection = reg["RBXScriptConnection"]
         local signal = reg["RBXScriptSignal"]
-        
-        -- Cache services với cloneref để tránh detection
-        local services = {
-            Players = cloneref(game:GetService("Players")),
-            UIS = cloneref(game:GetService("UserInputService")),
-            RS = cloneref(game:GetService("RunService"))
-        }
-        
-        local LocalPlayer = services.Players.LocalPlayer
+        local gc = getgc(true)
+
         local connection_count = 0
-        local patched_functions = {}
 
-
-        local function stealth_hook(original, replacement)
-            if patched_functions[original] then
-                return patched_functions[original]
-            end
-            
-            local cloned = clonefunction(original)
-            local refs = {}
-            local ref_count = 0
-            
-            -- Scan GC với random sampling để tránh lag spike
-            local gc_size = #gc
-            local sample_rate = gc_size > 10000 and 3 or 1 -- Skip mỗi 3 item nếu GC quá lớn
-            
-            for i = 1, gc_size, sample_rate do
-                local v = gc[i]
-                if typeof(v) == "table" then
-                    local size = 0
-                    local has_func = false
-                    
-                    -- Quick size check trước khi scan
-                    for _ in pairs(v) do
-                        size = size + 1
-                        if size > 3000 then break end
-                    end
-                    
-                    if size < 3000 then
-                        local idx = table.find(v, original)
-                        if idx then
-                            refs[v] = idx
-                            ref_count = ref_count + 1
-                        end
-                    end
-                end
-            end
-            
-            -- Hook chính với error handling
-            local success, err = pcall(function()
-                hookfunction(original, replacement)
-            end)
-            
-            if not success then
-                warn("[Bypass] Hook failed:", err)
-                return original
-            end
-            
-
-            task.spawn(function()
-                for tbl, idx in pairs(refs) do
-                    pcall(function()
-                        rawset(tbl, idx, cloned)
-                    end)
-                end
-            end)
-            
-            patched_functions[original] = cloned
-            return cloned
-        end
-
-        local suspicious_patterns = {
-            "AC", "Anti", "Cheat", "Detect", "Ban", "Kick", 
-            "Monitor", "Check", "Verify", "Validate", "Security"
-        }
-        
-        local function is_anticheat(source)
-            if not source then return false end
-            
-            
-            for _, pattern in ipairs(suspicious_patterns) do
-                if source:match(pattern) then
-                    return true
-                end
-            end
-            
-
-            local _, dots = source:gsub("%.", "")
-            return dots == 1 and not source:find("Replicated")
-        end
-        
-        
-        for i, v in pairs(reg) do
+        for i, v in reg do
             if typeof(v) == "function" and islclosure(v) then
-                local success, info = pcall(getinfo, v)
-                if success and info then
-                    if is_anticheat(info.source) then
-                        local upvals = getupvalues(v)
-          
-                        if upvals and upvals[2] and typeof(upvals[2]) == "number" and upvals[2] < 50 then
-                            connection_count = connection_count + 1
-                            
-                            reg[i] = newcclosure(function() end)
-                        end
+                local info = getinfo(v)
+                local _, count = string.gsub(info.source, "%.", "")
+                if count == 1 and not string.find(info.source, "Replicated") then
+                    if getupvalues(v)[2] ~= 26 then
+                        connection_count+=1
+                        reg[i] = function(a) end
                     end
                 end
             end
         end
-        
-        if connection_count < 1 or connection_count > 100 then
-            warn(string.format("[Bypass] Unusual connection count: %d - Game may have updated", connection_count))
-        end
-        local signal_old
-        signal_old = stealth_hook(signal.__index, newcclosure(LPH_NO_UPVALUES(function(self, key)
-            -- Kiểm tra Connect/connect
-            if tostring(key):lower():match("^connect") then
-                local caller = getinfo(3)
-                if caller and is_anticheat(caller.source) then
-                    return newcclosure(function(...)
-                        local proxy = newproxy(true)
-                        getmetatable(proxy).__index = function() 
-                            return newcclosure(function() end) 
-                        end
-                        return proxy
-                    end)
+
+        --[[if connection_count < 4 then
+            cloneref(game:GetService("Players"))["LocalPlayer"]:Kick("[juju]\nda hood has updated, please wait for juju to update.")
+            task["wait"](9e9) -- << idk if this will yield in luraph ?
+            return
+        end]]
+
+        local function safe_hook_function(old, replace)
+            local fake_old = clonefunction(old)
+
+            local replacements = {}
+
+            for _, v in gc do
+                if typeof(v) == "table" and #v < 2500 then
+                    local index = table.find(v, old)
+
+                    if index then
+                        replacements[v] = index
+                    end
                 end
             end
-            return signal_old(self, key)
+
+            hookfunction(old, replace)
+
+            for _, v in replacements do
+                rawset(_, v, fake_old)
+            end
+
+            return fake_old
+        end
+
+        old = nil; old = safe_hook_function(signal.__index, LPH_NO_UPVALUES(function(self, index)
+            if (index:find("^[Cc]onnect")) and getinfo(3) then
+                local source = getinfo(3).source
+                local _, count = string.gsub(source, "%.", "")
+                if count == 1 and not string.find(source, "Replicated") then
+                    return function()
+                        return setrawmetatable(newproxy(), connection)
+                    end
+                end
+            end
+            return old(self, index)
+        end))
+
+        old2 = nil; old2 = safe_hook_function(cloneref(game["GetService"](game, "UserInputService")).GetFocusedTextBox, newcclosure(LPH_NO_UPVALUES(function()
+            return nil
         end)))
 
-        local uis_old
-        uis_old = stealth_hook(services.UIS.GetFocusedTextBox, newcclosure(function(...)
-            return nil
-        end))
-        
-        pcall(function()
-            local iskeydown_old = services.UIS.IsKeyDown
-            stealth_hook(iskeydown_old, newcclosure(function(self, key, ...)
-                return iskeydown_old(self, key, ...)
-            end))
-        end)
-
-        local old_namecall
-        old_namecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-            local method = getnamecallmethod()
-            local args = {...}
-            
-            if method == "Kick" and self == LocalPlayer then
-                return
-            end
-            
-            if method == "FireServer" or method == "InvokeServer" then
-                local caller = getinfo(2)
-                if caller and is_anticheat(caller.source) then
-                    return
-                end
-            end
-            
-            return old_namecall(self, ...)
-        end))
-        task.spawn(function()
-            local last_check = tick()
-            services.RS.Heartbeat:Connect(function()
-                local now = tick()
-                if now - last_check > 5 then
-                    if not getgenv().wraith_bypass_v2 then
-                        warn("[Bypass] Bypass has been cleared! Re-applying...")
-                    end
-                    last_check = now
-                end
-            end)
-        end)
-        getgenv().wraith_bypass_v2 = {
-            active = true,
-            timestamp = tick(),
-            connections_patched = connection_count,
-            version = "2.0"
-        }
-        task.wait(0.5)
-        print(string.format(
-            "[Wraith Bypass v2.0]\n✓ Patched %d connections\n✓ Hooked %d functions\n✓ Status: Active", 
-            connection_count, 
-            #patched_functions
-        ))
+        getgenv().done = true
     end
 end)()
 
