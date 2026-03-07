@@ -11304,7 +11304,8 @@ do
         local sounds = {
             ["windy winter"] = "rbxassetid://6046340391",
             ["light rain"] = "rbxassetid://18862087062",
-            ["thunderstorm"] = "rbxassetid://4305545740",
+            ["thunderstorm"] = "rbxassetid://9112853422",
+            ["raindrop"] = "rbxassetid://122813811029978",
             ["night"] = "rbxassetid://179507208",
             ["day"] = "rbxassetid://6189453706"
         }
@@ -11312,7 +11313,7 @@ do
 
         menu_references["background_noise"] = menu_references["lighting_section"]:create_element({["name"] = "background noise"}, {["toggle"] = {["flag"] = "background_noise"}})
             menu_references["background_noise_settings"] = menu_references["background_noise"]:create_settings()
-            menu_references["background_noise_sound"] = menu_references["background_noise_settings"]:create_element({["name"] = "sound"}, {["dropdown"] = {["flag"] = "background_noise_sound", ["requires_one"] = true, ["options"] = {"windy winter", "thunderstorm", "light rain", "night", "day"}, ["use_custom_extensions"] = {"mp3", "ogg", "wav"}, ["default"] = {"night"}}})
+            menu_references["background_noise_sound"] = menu_references["background_noise_settings"]:create_element({["name"] = "sound"}, {["dropdown"] = {["flag"] = "background_noise_sound", ["requires_one"] = true, ["options"] = {"windy winter", "thunderstorm", "light rain", "night", "day", " raindrop"}, ["use_custom_extensions"] = {"mp3", "ogg", "wav"}, ["default"] = {"raindrop"}}})
             menu_references["background_noise_volume"] = menu_references["background_noise_settings"]:create_element({["name"] = "volume"}, {["slider"] = {["flag"] = "background_noise_volume", ["min"] = 0, ["max"] = 100, ["default"] = 25, ["suffix"] = "%"}})
         
         create_connection(menu_references["background_noise"]["on_toggle_change"], function(value)
