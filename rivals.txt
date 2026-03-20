@@ -18,7 +18,7 @@ local Mouse = LocalPlayer:GetMouse()
 local IsMobile = UserInputService.TouchEnabled 
     and not UserInputService.MouseEnabled
     and not UserInputService.GamepadEnabled
-local MobileScale = IsMobile and 1.3 or 1.0
+local MobileScale = IsMobile and 0.7 or 1.0
 
 -- Math utility functions
 local function clamp(x, min, max)
