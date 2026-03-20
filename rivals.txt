@@ -2019,23 +2019,23 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         screenGui.Name = "FFA_Advanced"
         screenGui.ResetOnSpawn = false
         screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        screenGui.IgnoreGuiInset = true
         screenGui.Parent = game:GetService("CoreGui")
 
-        -- Main Frame (Mobile-responsive width)
-        local screenW = workspace.CurrentCamera.ViewportSize.X
-        local panelW = IsMobile and math.min(screenW - 16, 300) or 300
+        -- Tính kích thước màn hình thực
+        local VP = workspace.CurrentCamera.ViewportSize
+        local screenW, screenH = VP.X, VP.Y
+        local panelW = IsMobile and math.min(screenW - 16, 290) or 300
+
+        -- Main Frame
         local mainFrame = Instance.new("Frame")
         mainFrame.Size = UDim2.new(0, panelW, 0, 0)
-        mainFrame.Position = IsMobile and UDim2.new(0, 8, 0, 50) or UDim2.new(0, 20, 0, 50)
+        mainFrame.Position = UDim2.new(0, 8, 0, 50)
         mainFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 18)
         mainFrame.BorderSizePixel = 0
         mainFrame.ClipsDescendants = true
         mainFrame.Parent = screenGui
-
-        local mainCorner = Instance.new("UICorner")
-        mainCorner.CornerRadius = UDim.new(0, 8)
-        mainCorner.Parent = mainFrame
-
+        Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
         local mainStroke = Instance.new("UIStroke")
         mainStroke.Color = Color3.fromRGB(80, 40, 120)
         mainStroke.Thickness = 1.5
@@ -2049,11 +2049,8 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         titleBar.BorderSizePixel = 0
         titleBar.ZIndex = 2
         titleBar.Parent = mainFrame
-
-        local titleCorner = Instance.new("UICorner")
-        titleCorner.CornerRadius = UDim.new(0, 8)
-        titleCorner.Parent = titleBar
-
+        Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 8)
+        -- patch để fill góc dưới của titleBar
         local titlePatch = Instance.new("Frame")
         titlePatch.Size = UDim2.new(1, 0, 0, 8)
         titlePatch.Position = UDim2.new(0, 0, 1, -8)
@@ -2062,14 +2059,108 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         titlePatch.ZIndex = 2
         titlePatch.Parent = titleBar
 
-        -- ══ MOBILE DRAG FIX ══
-        -- Floating toggle button (hiện khi UI bị ẩn)
+        -- Accent line
+        local accentLine = Instance.new("Frame")
+        accentLine.Size = UDim2.new(1, -20, 0, 2)
+        accentLine.Position = UDim2.new(0, 10, 1, -1)
+        accentLine.BackgroundColor3 = Color3.fromRGB(120, 50, 180)
+        accentLine.BorderSizePixel = 0
+        accentLine.ZIndex = 3
+        accentLine.Parent = titleBar
+        local ag = Instance.new("UIGradient")
+        ag.Color = ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(80,30,200)),ColorSequenceKeypoint.new(0.5,Color3.fromRGB(180,60,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(80,30,200))})
+        ag.Parent = accentLine
+
+        -- Title label
+        local titleLabel = Instance.new("TextLabel")
+        titleLabel.Size = UDim2.new(1, -120, 1, 0)
+        titleLabel.Position = UDim2.new(0, 10, 0, 0)
+        titleLabel.BackgroundTransparency = 1
+        titleLabel.Text = "FFA Panel"
+        titleLabel.TextColor3 = Color3.fromRGB(200, 140, 255)
+        titleLabel.Font = Enum.Font.GothamBold
+        titleLabel.TextSize = 13
+        titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        titleLabel.ZIndex = 3
+        titleLabel.Parent = titleBar
+
+        -- Khai báo menuLocked TRƯỚC khi dùng trong drag
+        local menuLocked = false
+
+        -- ── Nút ✕ Close (ẩn panel, hiện nút ⚡)
+        local closeBtn = Instance.new("TextButton")
+        closeBtn.Size = UDim2.new(0, 30, 0, 26)
+        closeBtn.Position = UDim2.new(1, -34, 0.5, -13)
+        closeBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 30)
+        closeBtn.Text = "✕"
+        closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+        closeBtn.Font = Enum.Font.GothamBold
+        closeBtn.TextSize = 12
+        closeBtn.BorderSizePixel = 0
+        closeBtn.ZIndex = 3
+        closeBtn.Parent = titleBar
+        Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 4)
+
+        -- ── Nút — Minimize
+        local minBtn = Instance.new("TextButton")
+        minBtn.Size = UDim2.new(0, 30, 0, 26)
+        minBtn.Position = UDim2.new(1, -68, 0.5, -13)
+        minBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+        minBtn.Text = "—"
+        minBtn.TextColor3 = Color3.fromRGB(200,200,200)
+        minBtn.Font = Enum.Font.GothamBold
+        minBtn.TextSize = 14
+        minBtn.BorderSizePixel = 0
+        minBtn.ZIndex = 3
+        minBtn.Parent = titleBar
+        Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 4)
+
+        -- ── Nút 🔒 Lock (khóa drag)
+        local lockBtn = Instance.new("TextButton")
+        lockBtn.Size = UDim2.new(0, 30, 0, 26)
+        lockBtn.Position = UDim2.new(1, -102, 0.5, -13)
+        lockBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 30)
+        lockBtn.Text = "🔓"
+        lockBtn.TextColor3 = Color3.fromRGB(200,200,200)
+        lockBtn.Font = Enum.Font.GothamBold
+        lockBtn.TextSize = 13
+        lockBtn.BorderSizePixel = 0
+        lockBtn.ZIndex = 3
+        lockBtn.Parent = titleBar
+        Instance.new("UICorner", lockBtn).CornerRadius = UDim.new(0, 4)
+        lockBtn.MouseButton1Click:Connect(function()
+            menuLocked = not menuLocked
+            lockBtn.Text = menuLocked and "🔒" or "🔓"
+            lockBtn.BackgroundColor3 = menuLocked and Color3.fromRGB(120,30,30) or Color3.fromRGB(30,80,30)
+        end)
+
+        -- ── Nút 🪟 Toggle LinoriaLib window
+        local libBtn = Instance.new("TextButton")
+        libBtn.Size = UDim2.new(0, 30, 0, 26)
+        libBtn.Position = UDim2.new(1, -136, 0.5, -13)
+        libBtn.BackgroundColor3 = Color3.fromRGB(20, 60, 100)
+        libBtn.Text = "🪟"
+        libBtn.TextColor3 = Color3.fromRGB(200,200,200)
+        libBtn.Font = Enum.Font.GothamBold
+        libBtn.TextSize = 13
+        libBtn.BorderSizePixel = 0
+        libBtn.ZIndex = 3
+        libBtn.Parent = titleBar
+        Instance.new("UICorner", libBtn).CornerRadius = UDim.new(0, 4)
+        local libVisible = true
+        libBtn.MouseButton1Click:Connect(function()
+            libVisible = not libVisible
+            pcall(function() Library.Main.Visible = libVisible end)
+            libBtn.BackgroundColor3 = libVisible and Color3.fromRGB(20,60,100) or Color3.fromRGB(80,20,20)
+        end)
+
+        -- ── Floating ⚡ button (hiện lại panel khi bị ẩn)
         local toggleBtn = Instance.new("TextButton")
         toggleBtn.Size = UDim2.new(0, 48, 0, 48)
-        toggleBtn.Position = UDim2.new(0, 10, 0, 50)
+        toggleBtn.Position = UDim2.new(0, 8, 0, 50)
         toggleBtn.BackgroundColor3 = Color3.fromRGB(80, 30, 150)
         toggleBtn.Text = "⚡"
-        toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        toggleBtn.TextColor3 = Color3.fromRGB(255,255,255)
         toggleBtn.Font = Enum.Font.GothamBold
         toggleBtn.TextSize = 22
         toggleBtn.BorderSizePixel = 0
@@ -2082,167 +2173,60 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         tbStroke.Thickness = 2
         tbStroke.Parent = toggleBtn
 
-        -- Drag cho toggle button
+        -- Drag cho toggleBtn (nút ⚡)
         do
-            local tbDragging = false
-            local tbDragStart, tbStartPos
-            toggleBtn.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    tbDragging = true
-                    tbDragStart = input.Position
-                    tbStartPos = toggleBtn.Position
+            local td, tdStart, tdPos = false, nil, nil
+            toggleBtn.InputBegan:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.Touch or i.UserInputType == Enum.UserInputType.MouseButton1 then
+                    td = true; tdStart = Vector2.new(i.Position.X, i.Position.Y); tdPos = toggleBtn.Position
                 end
             end)
-            toggleBtn.InputChanged:Connect(function(input)
-                if tbDragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
-                    local delta = input.Position - tbDragStart
-                    local newX = tbStartPos.X.Offset + delta.X
-                    local newY = tbStartPos.Y.Offset + delta.Y
-                    toggleBtn.Position = UDim2.new(0, newX, 0, newY)
+            UserInputService.InputChanged:Connect(function(i)
+                if td and (i.UserInputType == Enum.UserInputType.Touch or i.UserInputType == Enum.UserInputType.MouseMovement) then
+                    local d = Vector2.new(i.Position.X, i.Position.Y) - tdStart
+                    toggleBtn.Position = UDim2.new(0, math.clamp(tdPos.X.Offset+d.X,0,screenW-48), 0, math.clamp(tdPos.Y.Offset+d.Y,0,screenH-48))
                 end
             end)
-            toggleBtn.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    tbDragging = false
-                end
+            UserInputService.InputEnded:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.Touch or i.UserInputType == Enum.UserInputType.MouseButton1 then td = false end
             end)
         end
-
         toggleBtn.MouseButton1Click:Connect(function()
             mainFrame.Visible = true
             toggleBtn.Visible = false
         end)
 
-        -- Touch drag cho mainFrame (kéo qua titleBar)
+        -- Drag cho mainFrame qua titleBar — dùng UIS global
         do
-            local dragging = false
-            local dragStart, frameStart
-            titleBar.InputBegan:Connect(function(input)
+            local drag, dragStart, frameStart = false, nil, nil
+            titleBar.InputBegan:Connect(function(i)
                 if menuLocked then return end
-                if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    dragging = true
-                    dragStart = Vector2.new(input.Position.X, input.Position.Y)
+                if i.UserInputType == Enum.UserInputType.Touch or i.UserInputType == Enum.UserInputType.MouseButton1 then
+                    drag = true
+                    dragStart = Vector2.new(i.Position.X, i.Position.Y)
                     frameStart = mainFrame.Position
                 end
             end)
-            -- Dùng UserInputService global để bắt move kể cả khi ngón tay rời khỏi titleBar
-            UserInputService.InputChanged:Connect(function(input)
-                if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
-                    local delta = Vector2.new(input.Position.X, input.Position.Y) - dragStart
-                    local newX = math.clamp(frameStart.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - panelW)
-                    local newY = math.clamp(frameStart.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - 42)
-                    mainFrame.Position = UDim2.new(0, newX, 0, newY)
-                    toggleBtn.Position = UDim2.new(0, newX, 0, newY)
+            UserInputService.InputChanged:Connect(function(i)
+                if not drag then return end
+                if i.UserInputType == Enum.UserInputType.Touch or i.UserInputType == Enum.UserInputType.MouseMovement then
+                    local d = Vector2.new(i.Position.X, i.Position.Y) - dragStart
+                    local nx = math.clamp(frameStart.X.Offset + d.X, 0, screenW - panelW)
+                    local ny = math.clamp(frameStart.Y.Offset + d.Y, 0, screenH - 42)
+                    mainFrame.Position = UDim2.new(0, nx, 0, ny)
+                    toggleBtn.Position = UDim2.new(0, nx, 0, ny)
                 end
             end)
-            UserInputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    dragging = false
-                end
+            UserInputService.InputEnded:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.Touch or i.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end
             end)
         end
-        -- ══ END MOBILE DRAG FIX ══
 
-        -- Accent line under title
-        local accentLine = Instance.new("Frame")
-        accentLine.Size = UDim2.new(1, -20, 0, 2)
-        accentLine.Position = UDim2.new(0, 10, 1, -1)
-        accentLine.BackgroundColor3 = Color3.fromRGB(120, 50, 180)
-        accentLine.BorderSizePixel = 0
-        accentLine.ZIndex = 3
-        accentLine.Parent = titleBar
-
-        local accentGradient = Instance.new("UIGradient")
-        accentGradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 30, 200)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 60, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 30, 200)),
-        })
-        accentGradient.Parent = accentLine
-
-        local titleLabel = Instance.new("TextLabel")
-        titleLabel.Size = UDim2.new(1, -150, 1, 0)
-        titleLabel.Position = UDim2.new(0, 14, 0, 0)
-        titleLabel.BackgroundTransparency = 1
-        titleLabel.Text = "FFA Panel"
-        titleLabel.TextColor3 = Color3.fromRGB(200, 140, 255)
-        titleLabel.Font = Enum.Font.GothamBold
-        titleLabel.TextSize = 13
-        titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-        titleLabel.ZIndex = 3
-        titleLabel.Parent = titleBar
-
-        -- Toggle LinoriaLib main window (Void/Orbit tabs)
-        local libToggleBtn = Instance.new("TextButton")
-        libToggleBtn.Size = UDim2.new(0, 30, 0, 26)
-        libToggleBtn.Position = UDim2.new(1, -138, 0.5, -13)
-        libToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 60, 100)
-        libToggleBtn.Text = "🪟"
-        libToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-        libToggleBtn.Font = Enum.Font.GothamBold
-        libToggleBtn.TextSize = 13
-        libToggleBtn.BorderSizePixel = 0
-        libToggleBtn.ZIndex = 3
-        libToggleBtn.Parent = titleBar
-        Instance.new("UICorner", libToggleBtn).CornerRadius = UDim.new(0, 4)
-
-        local libWindowVisible = true
-        libToggleBtn.MouseButton1Click:Connect(function()
-            libWindowVisible = not libWindowVisible
-            pcall(function()
-                Library.Main.Visible = libWindowVisible
-            end)
-            libToggleBtn.BackgroundColor3 = libWindowVisible and Color3.fromRGB(20, 60, 100) or Color3.fromRGB(60, 20, 20)
+        -- Nút close: ẩn panel, hiện ⚡
+        closeBtn.MouseButton1Click:Connect(function()
+            mainFrame.Visible = false
+            toggleBtn.Visible = true
         end)
-
-        -- Minimize Button
-        local minBtn = Instance.new("TextButton")
-        minBtn.Size = UDim2.new(0, 30, 0, 26)
-        minBtn.Position = UDim2.new(1, -70, 0.5, -13)
-        minBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-        minBtn.Text = "—"
-        minBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-        minBtn.Font = Enum.Font.GothamBold
-        minBtn.TextSize = 14
-        minBtn.BorderSizePixel = 0
-        minBtn.ZIndex = 3
-        minBtn.Parent = titleBar
-        Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 4)
-
-        -- Lock Button (khóa vị trí, tránh kéo nhầm)
-        local lockBtn = Instance.new("TextButton")
-        lockBtn.Size = UDim2.new(0, 30, 0, 26)
-        lockBtn.Position = UDim2.new(1, -104, 0.5, -13)
-        lockBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 30)
-        lockBtn.Text = "🔓"
-        lockBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-        lockBtn.Font = Enum.Font.GothamBold
-        lockBtn.TextSize = 13
-        lockBtn.BorderSizePixel = 0
-        lockBtn.ZIndex = 3
-        lockBtn.Parent = titleBar
-        Instance.new("UICorner", lockBtn).CornerRadius = UDim.new(0, 4)
-
-        local menuLocked = false
-        lockBtn.MouseButton1Click:Connect(function()
-            menuLocked = not menuLocked
-            lockBtn.Text = menuLocked and "🔒" or "🔓"
-            lockBtn.BackgroundColor3 = menuLocked and Color3.fromRGB(120, 30, 30) or Color3.fromRGB(30, 80, 30)
-        end)
-
-        -- Close Button
-        local closeBtn = Instance.new("TextButton")
-        closeBtn.Size = UDim2.new(0, 30, 0, 26)
-        closeBtn.Position = UDim2.new(1, -36, 0.5, -13)
-        closeBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 30)
-        closeBtn.Text = "✕"
-        closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeBtn.Font = Enum.Font.GothamBold
-        closeBtn.TextSize = 12
-        closeBtn.BorderSizePixel = 0
-        closeBtn.ZIndex = 3
-        closeBtn.Parent = titleBar
-        Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 4)
 
         -- Scroll Frame for Content
         local scrollFrame = Instance.new("ScrollingFrame")
@@ -2544,11 +2528,6 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
                 updateSize()
                 minBtn.Text = "—"
             end
-        end)
-
-        closeBtn.MouseButton1Click:Connect(function()
-            mainFrame.Visible = false
-            toggleBtn.Visible = true
         end)
 
         -- ══════════════════════════════════════════════════════
