@@ -2021,10 +2021,12 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         screenGui.Parent = game:GetService("CoreGui")
 
-        -- Main Frame
+        -- Main Frame (Mobile-responsive width)
+        local screenW = workspace.CurrentCamera.ViewportSize.X
+        local panelW = IsMobile and math.min(screenW - 16, 300) or 300
         local mainFrame = Instance.new("Frame")
-        mainFrame.Size = UDim2.new(0, 300, 0, 0)
-        mainFrame.Position = UDim2.new(0, 20, 0, 50)
+        mainFrame.Size = UDim2.new(0, panelW, 0, 0)
+        mainFrame.Position = IsMobile and UDim2.new(0, 8, 0, 50) or UDim2.new(0, 20, 0, 50)
         mainFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 18)
         mainFrame.BorderSizePixel = 0
         mainFrame.ClipsDescendants = true
@@ -2116,23 +2118,24 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
             local dragging = false
             local dragStart, frameStart
             titleBar.InputBegan:Connect(function(input)
+                if menuLocked then return end
                 if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = true
-                    dragStart = input.Position
+                    dragStart = Vector2.new(input.Position.X, input.Position.Y)
                     frameStart = mainFrame.Position
                 end
             end)
-            titleBar.InputChanged:Connect(function(input)
+            -- Dùng UserInputService global để bắt move kể cả khi ngón tay rời khỏi titleBar
+            UserInputService.InputChanged:Connect(function(input)
                 if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
-                    local delta = input.Position - dragStart
-                    local newX = frameStart.X.Offset + delta.X
-                    local newY = frameStart.Y.Offset + delta.Y
+                    local delta = Vector2.new(input.Position.X, input.Position.Y) - dragStart
+                    local newX = math.clamp(frameStart.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - panelW)
+                    local newY = math.clamp(frameStart.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - 42)
                     mainFrame.Position = UDim2.new(0, newX, 0, newY)
-                    -- Kéo toggleBtn theo vị trí tương ứng
                     toggleBtn.Position = UDim2.new(0, newX, 0, newY)
                 end
             end)
-            titleBar.InputEnded:Connect(function(input)
+            UserInputService.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = false
                 end
@@ -2158,16 +2161,39 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         accentGradient.Parent = accentLine
 
         local titleLabel = Instance.new("TextLabel")
-        titleLabel.Size = UDim2.new(1, -100, 1, 0)
+        titleLabel.Size = UDim2.new(1, -150, 1, 0)
         titleLabel.Position = UDim2.new(0, 14, 0, 0)
         titleLabel.BackgroundTransparency = 1
-        titleLabel.Text = "FFA Advanced Panel"
+        titleLabel.Text = "FFA Panel"
         titleLabel.TextColor3 = Color3.fromRGB(200, 140, 255)
         titleLabel.Font = Enum.Font.GothamBold
-        titleLabel.TextSize = 14
+        titleLabel.TextSize = 13
         titleLabel.TextXAlignment = Enum.TextXAlignment.Left
         titleLabel.ZIndex = 3
         titleLabel.Parent = titleBar
+
+        -- Toggle LinoriaLib main window (Void/Orbit tabs)
+        local libToggleBtn = Instance.new("TextButton")
+        libToggleBtn.Size = UDim2.new(0, 30, 0, 26)
+        libToggleBtn.Position = UDim2.new(1, -138, 0.5, -13)
+        libToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 60, 100)
+        libToggleBtn.Text = "🪟"
+        libToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        libToggleBtn.Font = Enum.Font.GothamBold
+        libToggleBtn.TextSize = 13
+        libToggleBtn.BorderSizePixel = 0
+        libToggleBtn.ZIndex = 3
+        libToggleBtn.Parent = titleBar
+        Instance.new("UICorner", libToggleBtn).CornerRadius = UDim.new(0, 4)
+
+        local libWindowVisible = true
+        libToggleBtn.MouseButton1Click:Connect(function()
+            libWindowVisible = not libWindowVisible
+            pcall(function()
+                Library.Main.Visible = libWindowVisible
+            end)
+            libToggleBtn.BackgroundColor3 = libWindowVisible and Color3.fromRGB(20, 60, 100) or Color3.fromRGB(60, 20, 20)
+        end)
 
         -- Minimize Button
         local minBtn = Instance.new("TextButton")
@@ -2182,6 +2208,27 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         minBtn.ZIndex = 3
         minBtn.Parent = titleBar
         Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 4)
+
+        -- Lock Button (khóa vị trí, tránh kéo nhầm)
+        local lockBtn = Instance.new("TextButton")
+        lockBtn.Size = UDim2.new(0, 30, 0, 26)
+        lockBtn.Position = UDim2.new(1, -104, 0.5, -13)
+        lockBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 30)
+        lockBtn.Text = "🔓"
+        lockBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        lockBtn.Font = Enum.Font.GothamBold
+        lockBtn.TextSize = 13
+        lockBtn.BorderSizePixel = 0
+        lockBtn.ZIndex = 3
+        lockBtn.Parent = titleBar
+        Instance.new("UICorner", lockBtn).CornerRadius = UDim.new(0, 4)
+
+        local menuLocked = false
+        lockBtn.MouseButton1Click:Connect(function()
+            menuLocked = not menuLocked
+            lockBtn.Text = menuLocked and "🔒" or "🔓"
+            lockBtn.BackgroundColor3 = menuLocked and Color3.fromRGB(120, 30, 30) or Color3.fromRGB(30, 80, 30)
+        end)
 
         -- Close Button
         local closeBtn = Instance.new("TextButton")
@@ -2220,11 +2267,11 @@ ExtrasGameModes:AddButton('FFA Advanced', function()
         contentPadding.Parent = scrollFrame
 
         -- Dynamic sizing
-        local maxHeight = 520
+        local maxHeight = IsMobile and (workspace.CurrentCamera.ViewportSize.Y - 80) or 520
         local function updateSize()
             local h = listLayout.AbsoluteContentSize.Y + 62
             if h > maxHeight then h = maxHeight end
-            mainFrame.Size = UDim2.new(0, 300, 0, h)
+            mainFrame.Size = UDim2.new(0, panelW, 0, h)
         end
         listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateSize)
 
