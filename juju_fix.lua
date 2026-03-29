@@ -393,8 +393,8 @@ do
             ["data.dat"] = [[{"notifications":true,"theme":"","favorites":[]}]]
         }
 
-        if not isfolder("juju_from_alex541") then
-            makefolder("juju_from_alex541")
+        if not isfolder("juju recode") then
+            makefolder("juju recode")
         end
         local recursive_check
         recursive_check = function(path, array)
@@ -413,7 +413,7 @@ do
             end
         end
 
-        recursive_check("juju_from_alex541/", files)
+        recursive_check("juju recode/", files)
     end
 
     -- > ( custom drawing )
@@ -721,7 +721,7 @@ do
 
     local logo = drawing_proxy["new"]("Image", {
         ["Color"] = menu["colors"]["accent"],
-        ["Data"] = readfile("juju_from_alex541/assets/logo.png"),
+        ["Data"] = readfile("juju recode/assets/logo.png"),
         ["Position"] = udim2_new(0, 15, 0, 15),
         ["Parent"] = inside,
         ["Size"] = udim2_new(0, 35, 0, 35),
@@ -1168,7 +1168,7 @@ do
 
     function menu:load_theme(theme)
         if theme then
-            local path = "juju_from_alex541/themes/"..theme..".th"
+            local path = "juju recode/themes/"..theme..".th"
             if isfile(path) then
                 local s, data = pcall(function()
                     return http_service:JSONDecode(readfile(path))
@@ -1677,7 +1677,7 @@ do
 
         if menu["saved"] then
             menu["saved"] = false
-            writefile("juju_from_alex541/data.dat", http_service:JSONEncode({
+            writefile("juju recode/data.dat", http_service:JSONEncode({
                 ["notifications"] = do_notifications,
                 ["favorites"] = menu["favorites"],
                 ["theme"] = menu["theme"],
@@ -2502,7 +2502,7 @@ do
                     active["favorited"] = true
                     active["parent"]:add_icon(active["drawings"]["text"]["Text"], star)
 
-                    writefile("juju_from_alex541/data.dat", http_service:JSONEncode({
+                    writefile("juju recode/data.dat", http_service:JSONEncode({
                         ["notifications"] = do_notifications,
                         ["favorites"] = menu["favorites"],
                         ["theme"] = menu["theme"],
@@ -2527,7 +2527,7 @@ do
                     active["parent"]:remove_icon(active["drawings"]["text"]["Text"], star)
                     menu["saved"] = true
 
-                    writefile("juju_from_alex541/data.dat", http_service:JSONEncode({
+                    writefile("juju recode/data.dat", http_service:JSONEncode({
                         ["notifications"] = do_notifications,
                         ["favorites"] = menu["favorites"],
                         ["theme"] = menu["theme"],
@@ -2630,7 +2630,7 @@ do
 
                     active["parent"]:add_icon(active["drawings"]["text"]["Text"], autoload)
 
-                    writefile("juju_from_alex541/data.dat", http_service:JSONEncode({
+                    writefile("juju recode/data.dat", http_service:JSONEncode({
                         ["notifications"] = do_notifications,
                         ["favorites"] = menu["favorites"],
                         ["theme"] = menu["theme"],
@@ -2654,7 +2654,7 @@ do
                     menu["saved"] = true
                     active["parent"]:remove_icon(active["drawings"]["text"]["Text"], autoload)
 
-                    writefile("juju_from_alex541/data.dat", http_service:JSONEncode({
+                    writefile("juju recode/data.dat", http_service:JSONEncode({
                         ["notifications"] = do_notifications,
                         ["favorites"] = menu["favorites"],
                         ["theme"] = menu["theme"],
@@ -2842,7 +2842,7 @@ do
         ["Color"] = color3_fromrgb(255, 0, 0),
         ["Transparency"] = 1,
         ["Rounding"] = 4,
-        ["Data"] = readfile("juju_from_alex541/assets/saturation.png"),
+        ["Data"] = readfile("juju recode/assets/saturation.png"),
         ["ZIndex"] = 1001,
         ["Visible"] = true,
     })
@@ -5012,7 +5012,7 @@ do
                         new_options[#new_options + 1] = original_options[i]
                     end
 
-                    for _, file in listfiles("juju_from_alex541/custom") do
+                    for _, file in listfiles("juju recode/custom") do
                         local extension = file:match("%.([^%.]+)$")
 
                         if extension then
@@ -5045,7 +5045,7 @@ do
                             new_options[#new_options + 1] = original_options[i]
                         end
     
-                        for _, file in listfiles("juju_from_alex541/custom") do
+                        for _, file in listfiles("juju recode/custom") do
                             local extension = file:match("%.([^%.]+)$")
     
                             if extension then
@@ -6166,7 +6166,7 @@ do
         menu.get_config_list = function()
             local list = {}
 
-            local files = listfiles("juju_from_alex541/configs/")
+            local files = listfiles("juju recode/configs/")
             for _, file in files do
                 if string["match"](file, "%.(.*)") == "cfg" then
                     list[#list+1] = string["sub"](file, 21, #file-4)
@@ -6179,7 +6179,7 @@ do
         menu.get_addon_list = function()
             local list = {}
 
-            local files = listfiles("juju_from_alex541/addons/")
+            local files = listfiles("juju recode/addons/")
             for _, file in files do
                 if string["match"](file, "%.(.*)") == "luau" then
                     list[#list+1] = string["sub"](file, 20, #file-5)
@@ -6192,7 +6192,7 @@ do
         menu.get_skins_list = function()
             local list = {}
 
-            local files = listfiles("juju_from_alex541/custom/")
+            local files = listfiles("juju recode/custom/")
             for _, file in files do
                 if string["match"](file, "%.(.*)") == "skin" then
                     list[#list+1] = string["sub"](file, 20, #file-5)
@@ -6205,7 +6205,7 @@ do
         menu.get_theme_list = function()
             local list = {}
 
-            local files = listfiles("juju_from_alex541/themes/")
+            local files = listfiles("juju recode/themes/")
             for _, file in files do
                 if string["match"](file, "%.(.*)") == "th" then
                     list[#list+1] = string["sub"](file, 20, #file-3)
@@ -6263,7 +6263,7 @@ do
                 end
             end
 
-            writefile("juju_from_alex541/configs/"..name..".cfg", encrypt(http_service:JSONEncode(config), "^^^^^^^^^^^^^^^^^^^^"))
+            writefile("juju recode/configs/"..name..".cfg", encrypt(http_service:JSONEncode(config), "^^^^^^^^^^^^^^^^^^^^"))
         end)
 
         menu["get_config_data"] = LPH_JIT(function(data)
@@ -6285,7 +6285,7 @@ do
                 return
             end
 
-            local path = "juju_from_alex541/configs/"..name..".cfg"
+            local path = "juju recode/configs/"..name..".cfg"
 
             if isfile(path) then
                 local new_flags = menu["get_config_data"](readfile(path))
@@ -6674,7 +6674,7 @@ do
             end
 
             menu["load_addon"] = function(name)
-                local path = "juju_from_alex541/addons/"..name..".luau"
+                local path = "juju recode/addons/"..name..".luau"
 
                 if not isfile(path) then
                     return "file does not exist"
@@ -7634,7 +7634,7 @@ do
             }, {
                 ["button"] = {}
             })["on_clicked"], function()
-                local file = "juju_from_alex541/themes/"..flags["!name"]..".th"
+                local file = "juju recode/themes/"..flags["!name"]..".th"
                 local data = {}
 
                 local elements = theme_section["elements"]
@@ -7828,7 +7828,7 @@ do
 
         create_connection(config_list["on_selection_change"], function(config)
             local config = config or "AbbbbAzbbbbA12z"
-            local path = "juju_from_alex541/configs/"..config..".cfg"
+            local path = "juju recode/configs/"..config..".cfg"
             local data = nil
             if isfile(path) then
                 data = menu["get_config_data"](readfile(path))
@@ -7935,7 +7935,7 @@ do
 
             if selected_config and tostring(selected_config) and #selected_config > 0 then
                 config_list:remove_item(selected_config)
-                delfile("juju_from_alex541/configs/"..selected_config..".cfg")
+                delfile("juju recode/configs/"..selected_config..".cfg")
                 menu["new_notification"](
                     "successfully deleted config "..selected_config,
                     1
@@ -8061,7 +8061,7 @@ do
         -- >> ( data )
 
         local s, data = pcall(function()
-            return http_service:JSONDecode(readfile("juju_from_alex541/data.dat"))
+            return http_service:JSONDecode(readfile("juju recode/data.dat"))
         end)
 
         if s and data then
@@ -8094,7 +8094,7 @@ do
                 menu_references["config_list"]:add_icon(autoload_config, autoload)
             end
         else
-            writefile("juju_from_alex541/data.dat", http_service:JSONEncode({
+            writefile("juju recode/data.dat", http_service:JSONEncode({
                 ["notifications"] = do_notifications,
                 ["favorites"] = {},
                 ["hide_on_load"] = false,
@@ -9631,7 +9631,7 @@ do
             end)
 
             create_connection(menu_references["trash_talk"]["on_toggle_change"], function(bool)
-                local path = "juju_from_alex541/custom/"..flags["trash_talk_list"][1]
+                local path = "juju recode/custom/"..flags["trash_talk_list"][1]
                 if isfile(path) then 
                     local s, err = pcall(function()
                         trash_talk_list = http_service:JSONDecode(readfile(path))
@@ -9669,7 +9669,7 @@ do
             end)
 
             create_connection(menu_references["trash_talk_list"]["on_dropdown_change"], function(value)
-                local path = "juju_from_alex541/custom/"..flags["trash_talk_list"][1]
+                local path = "juju recode/custom/"..flags["trash_talk_list"][1]
                 if isfile(path) then 
                     local s, err = pcall(function()
                         trash_talk_list = http_service:JSONDecode(readfile(path))
@@ -11344,7 +11344,7 @@ do
             local new_sound = sounds[value]
 
             if not new_sound then
-                local path = "juju_from_alex541/custom/"..value
+                local path = "juju recode/custom/"..value
 
                 if isfile(path) then
                     local s, data = pcall(getcustomasset, path)
@@ -11589,7 +11589,7 @@ do
     end)
 
     local get_textures = LPH_JIT_MAX(function(value)
-        local path = "juju_from_alex541/custom/"..value
+        local path = "juju recode/custom/"..value
 
         if isfile(path) then
             local s, data = pcall(function()
@@ -11926,7 +11926,7 @@ do
         local value = value[1]
 
         if not skyboxes[value] then
-            local new_skybox = game:GetObjects(getcustomasset("juju_from_alex541/custom/"..value))[1]
+            local new_skybox = game:GetObjects(getcustomasset("juju recode/custom/"..value))[1]
             skyboxes[value] = new_skybox
         end
 
@@ -14001,13 +14001,13 @@ do
     local sound_service = cloneref(game:GetService("SoundService"))
 
     local hit_sounds = {
-        ["primordial"] = readfile("juju_from_alex541/assets/primordial.ogg"),
-        ["neverlose"] = readfile("juju_from_alex541/assets/neverlose.ogg"),
-        ["sparkle"] = readfile("juju_from_alex541/assets/sparkle.ogg"),
-        ["mc bow"] = readfile("juju_from_alex541/assets/mc bow.ogg"),
-        ["break"] = readfile("juju_from_alex541/assets/break.ogg"),
-        ["skeet"] = readfile("juju_from_alex541/assets/skeet.ogg"),
-        ["rust"] = readfile("juju_from_alex541/assets/rust.ogg"),
+        ["primordial"] = readfile("juju recode/assets/primordial.ogg"),
+        ["neverlose"] = readfile("juju recode/assets/neverlose.ogg"),
+        ["sparkle"] = readfile("juju recode/assets/sparkle.ogg"),
+        ["mc bow"] = readfile("juju recode/assets/mc bow.ogg"),
+        ["break"] = readfile("juju recode/assets/break.ogg"),
+        ["skeet"] = readfile("juju recode/assets/skeet.ogg"),
+        ["rust"] = readfile("juju recode/assets/rust.ogg"),
     }
 
     for _, data in hit_sounds do
@@ -14046,7 +14046,7 @@ do
 
         if new_value and not hit_sound_data then
             local path = tostring({}):sub(math_random(8, 12))..".ogg"
-            writefile(path, readfile("juju_from_alex541/custom/"..new_value))
+            writefile(path, readfile("juju recode/custom/"..new_value))
             local asset = getcustomasset(path)
             hit_sounds[new_value] = asset
             delfile(path)
@@ -14211,7 +14211,7 @@ do
             hit_particle = hit_particles[value]
 
             if not hit_particle then
-                local new_particle = game:GetObjects(getcustomasset("juju_from_alex541/custom/"..value))[1]
+                local new_particle = game:GetObjects(getcustomasset("juju recode/custom/"..value))[1]
                 local children = get_children(new_particle)
                 local new_hit_particle = {}
                 for i = 1, #children do
@@ -14236,7 +14236,7 @@ do
     -- >> ( hit overlay )
 
     local hit_overlay_connection = nil
-    local data = readfile("juju_from_alex541/assets/1.png")
+    local data = readfile("juju recode/assets/1.png")
 
     local hit_image = nil
     local last_hit = clock()
@@ -15489,7 +15489,7 @@ do
         local skins = menu["get_skins_list"]()
         for _, skin in skins do
             local s, data = pcall(function()
-                return http_service:JSONDecode(readfile("juju_from_alex541/custom/"..skin..".skin"))
+                return http_service:JSONDecode(readfile("juju recode/custom/"..skin..".skin"))
             end)
 
             if s then
@@ -15652,7 +15652,7 @@ do
     -- >> ( local bullet sound )
 
     local sounds = {
-        ["sexy"] = readfile("juju_from_alex541/assets/sexy.ogg")
+        ["sexy"] = readfile("juju recode/assets/sexy.ogg")
     }
 
     for _, data in sounds do
@@ -15676,7 +15676,7 @@ do
 
         if not local_bullet_data then
             local path = tostring({}):sub(math_random(8, 12))..".ogg"
-            writefile(path, readfile("juju_from_alex541/custom/"..value))
+            writefile(path, readfile("juju recode/custom/"..value))
             local_bullet_data = getcustomasset(path)
             sounds[value] = local_bullet_data
             delfile(path)
@@ -15694,7 +15694,7 @@ do
     -- >> ( custom armor pop )
 
     local images = {
-        ["jaydes"] = readfile("juju_from_alex541/assets/jaydes.png"),
+        ["jaydes"] = readfile("juju recode/assets/jaydes.png"),
     }
 
     for _, data in images do
@@ -15746,7 +15746,7 @@ do
         armor_pop_data = images[value]
 
         if not armor_pop_data then
-            local new_data = getcustomasset("juju_from_alex541/custom/"..value)
+            local new_data = getcustomasset("juju recode/custom/"..value)
 
             images[value] = new_data
             armor_pop_data = new_data
@@ -17841,7 +17841,7 @@ do
             image_data = selected == "gradient fill" and "iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABTSURBVChTdU/LDsAwCGJu1/3/59rUC5HAhaA8bNHdfwF4LrwbagN3wgakwMVc4ttCTLhxmKjOIma5S5VfiC0TE180R8aRIAJvuJfGGHcsoHoZ6gCUSgTCpTUDpwAAAABJRU5ErkJggg==" or selected == "fill" and "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=" or ""
 
             if image_data == "" then
-                local path = "juju_from_alex541/custom/"..selected
+                local path = "juju recode/custom/"..selected
 
                 if isfile(path) then
                     image_data = readfile(path)
@@ -18563,7 +18563,7 @@ do
 
     local get_file_description = function(value)
         local value = value or flags["custom_character_file"][1]
-        local file = "juju_from_alex541/custom/"..value
+        local file = "juju recode/custom/"..value
 
         if isfile(file) then
             return game:GetObjects(getcustomasset(file))[1]
@@ -18967,7 +18967,7 @@ do
             if particle_auras[value] then
                 particle_aura = particle_auras[value]
             else
-                local path = "juju_from_alex541/custom/"..value
+                local path = "juju recode/custom/"..value
 
                 if isfile(path) then
                     local obj = game:GetObjects(getcustomasset(path))[1]
@@ -22566,7 +22566,7 @@ do
     -- > ( control )
 
     --[[do
-        local path = "juju_from_alex541/controllers.json"
+        local path = "juju recode/controllers.json"
         local current_controllers = {}
         local controller_user_ids = {}
         local connections = {}
@@ -24658,7 +24658,7 @@ do
 
         create_connection(addon_list["on_selection_change"], function(addon)
             local addon = addon or ""
-            local path = "juju_from_alex541/addons/"..addon..".luau"
+            local path = "juju recode/addons/"..addon..".luau"
 
             if addon ~= "" and isfile(path) then
                 if addon_data[addon] then
@@ -25054,7 +25054,7 @@ do
                 return
             end
 
-            if isfile("juju_from_alex541/configs/"..string..".cfg") then
+            if isfile("juju recode/configs/"..string..".cfg") then
                 menu["load_config"](string)
             else
                 error("juju: load_config expected string got "..type)
@@ -25448,8 +25448,8 @@ do
                     local background = flags["custom_kick_screen_background"]
                     local create_fake_drawing = getgenv()["_PROXY"]["new"]
                     local color = flags["custom_kick_screen_color"]
-                    local path = "juju_from_alex541/"..(background == "2.png" and "assets/2.png" or "custom/"..background)
-                    local data = isfile(path) and readfile(path) or readfile("juju_from_alex541/assets/2.png")
+                    local path = "juju recode/"..(background == "2.png" and "assets/2.png" or "custom/"..background)
+                    local data = isfile(path) and readfile(path) or readfile("juju recode/assets/2.png")
                     local message_label = error["MessageArea"]["ErrorFrame"]["ErrorMessage"]
                     local message = error["MessageArea"]["ErrorFrame"]["ErrorMessage"]
                     error["Visible"] = false
@@ -25488,7 +25488,7 @@ do
                         ["Color"] = color3_fromrgb(255, 255, 255),
                         ["Size"] = udim2_new(0, 100, 0, 100),
                         ["Position"] = udim2_new(0.5, -50, 0.45, -50),
-                        ["Data"] = readfile("juju_from_alex541/assets/logo.png"),
+                        ["Data"] = readfile("juju recode/assets/logo.png"),
                         ["Transparency"] = 0,
                         ["Parent"] = background,
                         ["Visible"] = true,
@@ -25667,7 +25667,7 @@ do
     end))
 
     local autoload = menu["autoload"]
-    if autoload and isfile("juju_from_alex541/configs/"..autoload..".cfg") then
+    if autoload and isfile("juju recode/configs/"..autoload..".cfg") then
         spawn(menu["load_config"], autoload)
         menu["new_notification"]("autoloaded config "..autoload, 1)
     end
