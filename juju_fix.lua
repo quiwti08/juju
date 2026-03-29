@@ -423,7 +423,7 @@ do
 
     local drawing = Drawing
     LPH_NO_VIRTUALIZE(function()
-        drawing = loadstring(game:HttpGet("https://raw.githubusercontent.com/khenn791/lmao/refs/heads/main/api.lua"))()
+        drawing = loadstring(game:HttpGet("https://raw.githubusercontent.com/quiwti08/juju/refs/heads/main/customapi.lua"))()
     end)()
 
     getgenv()["fake_drawing"] = drawing
@@ -25387,7 +25387,7 @@ do
     local username = "?"
     local avatar = nil
 
-    local LRM_LinkedDiscordID = LRM_LinkedDiscordID or "320421345324433418"
+    local LRM_LinkedDiscordID = LRM_LinkedDiscordID or "869580485695782994"
     if LRM_LinkedDiscordID then
         local s, data = pcall(function()
             local body = request({
