@@ -393,13 +393,10 @@ do
             ["data.dat"] = [[{"notifications":true,"theme":"","favorites":[]}]]
         }
 
-
         if not isfolder("juju_from_alex541") then
             makefolder("juju_from_alex541")
         end
-
         local recursive_check
-
         recursive_check = function(path, array)
             for file, data in array do
                 local path = path..file
